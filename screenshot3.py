@@ -10,7 +10,6 @@ def print_time(threadName):
 
 sentinel = 0
 
-
 class screenshotThread (threading.Thread):
     def __init__(self, threadId, threadName, screenshotCount):
         threading.Thread.__init__(self)
@@ -51,19 +50,19 @@ promptDir = re.sub(r"^/home/user","~",promptDir)
 myPrompt = f"{green}user@debian02{white}:{blue}{promptDir}{white}$"
 
 commands = [
-    'sudo id',
-    'sudo hostname',
-    'sudo ip a',
-    'sudo nmap -v --stats-every 180 -Pn -sS scanme.nmap.org -oA nmap-tcp-all',
-    'sudo nmap -v --stats-every 180 -Pn -sU scanme.nmap.org -oA nmap-udp-all'
+    ('id', 'sudo id'),
+    ('hostname', 'sudo hostname'),
+    ('ip-address', 'sudo ip a'),
+    ('nmap-tcp-all','sudo nmap -v --stats-every 180 -Pn -sS scanme.nmap.org -oA nmap-tcp-all'),
+    ('nmap-udp-all', 'sudo nmap -v --stats-every 180 -Pn -sU scanme.nmap.org -oA nmap-udp-all')
     ]
 
 threadId=1
 commandId=1
-for command in commands:
+for (screenshotName, command) in commands:
     try:
 #        print_time("     Starting Threads")
-        screenshotThread1 = screenshotThread(threadId, "command-"+str(commandId)+"-begin", 5)
+        screenshotThread1 = screenshotThread(threadId, screenshotName + "-begin", 5)
         commandThread1 = commandThread(threadId+1, "commandThread-"+str(commandId), command)
         screenshotThread1.start()
         commandThread1.start()
@@ -71,7 +70,7 @@ for command in commands:
         commandThread1.join()
 #        print_time("     End Threads")
 
-        screenshotThread2 = screenshotThread(threadId+2, "command-"+str(commandId)+"-end", 2)
+        screenshotThread2 = screenshotThread(threadId+2, screenshotName + "-end", 2)
         screenshotThread2.start()
         screenshotThread2.join()
 
